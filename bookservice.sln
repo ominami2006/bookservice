@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bookservice", "webnovel\bookservice.csproj", "{6AA69B9F-1A1C-4827-8614-2140686F6D04}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6AA69B9F-1A1C-4827-8614-2140686F6D04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AA69B9F-1A1C-4827-8614-2140686F6D04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AA69B9F-1A1C-4827-8614-2140686F6D04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AA69B9F-1A1C-4827-8614-2140686F6D04}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {596985AD-4A74-4456-853D-9410AEE06F80}
+	EndGlobalSection
+EndGlobal
