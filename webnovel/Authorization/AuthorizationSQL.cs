@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
@@ -20,17 +20,17 @@ namespace bookservice {
             this.user = user;
             string connectionString = "";
             switch (this.user.Role) {
-                case UserRole.WN_GUEST:
-                    connectionString = "Data Source=localhost;Initial Catalog=webnovel;User ID=WN_GUEST;Password=guest;";
+                case UserRole.GUEST: // Renamed
+                    connectionString = "Data Source=localhost;Initial Catalog=bookservice;User ID=guest;Password=guest;"; // User renamed
                     break;
-                case UserRole.WN_READER:
-                    connectionString = "Data Source=localhost;Initial Catalog=webnovel;User ID=WN_READER;Password=reader;";
+                case UserRole.READER: // Renamed
+                    connectionString = "Data Source=localhost;Initial Catalog=bookservice;User ID=reader;Password=reader;"; // User renamed
                     break;
-                case UserRole.WN_WRITER:
-                    connectionString = "Data Source=localhost;Initial Catalog=webnovel;User ID=WN_WRITER;Password=writer;";
+                case UserRole.ADMIN:  // Renamed
+                    connectionString = "Data Source=localhost;Initial Catalog=bookservice;User ID=admin;Password=admin;"; // User renamed
                     break;
                 default:
-                    connectionString = "Data Source=localhost;Initial Catalog=webnovel;User ID=WN_GUEST;Password=guest;";
+                    connectionString = "Data Source=localhost;Initial Catalog=bookservice;User ID=guest;Password=guest;"; // User renamed
                     break;
             }
             dbConnection.SetСonnectionString(connectionString);
@@ -49,6 +49,7 @@ namespace bookservice {
             string hashedPassword = HashPassword(plainPassword);
             try {
                 dbConnection.OpenConnection();
+                // Stored procedure 'checkUserLogin' was updated to return 'is_admin'
                 using (SqlCommand cmd = new SqlCommand("checkUserLogin", dbConnection.GetConnection())) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Login", login);
@@ -58,7 +59,7 @@ namespace bookservice {
                             loggedInUser = new User {
                                 Id = Convert.ToInt32(reader["id"]),
                                 Login = reader["login"].ToString(),
-                                IsWriter = Convert.ToBoolean(reader["is_writer"]),
+                                IsAdmin = Convert.ToBoolean(reader["is_admin"]), // Changed from is_writer
                                 HashedPassword = hashedPassword
                             };
                         }
@@ -73,16 +74,17 @@ namespace bookservice {
             }
             return loggedInUser;
         }
-        public User RegisterUser(string login, string plainPassword, bool isWriter) {
+        public User RegisterUser(string login, string plainPassword, bool isAdmin) { // Changed from isWriter to isAdmin
             User newUser = null;
             string hashedPassword = HashPassword(plainPassword);
             try {
                 dbConnection.OpenConnection();
+                // Stored procedure 'registerNewUser' was updated for 'is_admin'
                 using (SqlCommand cmd = new SqlCommand("registerNewUser", dbConnection.GetConnection())) {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@Login", login);
                     cmd.Parameters.AddWithValue("@HashedPassword", hashedPassword);
-                    cmd.Parameters.AddWithValue("@IsWriter", isWriter);
+                    cmd.Parameters.AddWithValue("@IsAdmin", isAdmin); // Changed from @IsWriter
                     using (SqlDataReader reader = cmd.ExecuteReader()) {
                         if (reader.Read()) {
                             int newUserId = Convert.ToInt32(reader["NewUserID"]);
@@ -91,7 +93,7 @@ namespace bookservice {
                                 newUser = new User {
                                     Id = newUserId,
                                     Login = login,
-                                    IsWriter = isWriter,
+                                    IsAdmin = isAdmin, // Changed from isWriter
                                     HashedPassword = hashedPassword
                                 };
                             } else {
@@ -109,35 +111,8 @@ namespace bookservice {
             }
             return newUser;
         }
-        public bool BecomeWriter(int userId) {
-            bool success = false;
-            try {
-                dbConnection.OpenConnection();
-                using (SqlCommand cmd = new SqlCommand("UpdateUserWriterStatus", dbConnection.GetConnection())) {
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@UserID", userId);
-                    cmd.Parameters.AddWithValue("@NewIsWriterStatus", true);
-                    using (SqlDataReader reader = cmd.ExecuteReader()) {
-                        if (reader.Read()) {
-                            int rowsAffected = Convert.ToInt32(reader["RowsAffected"]);
-                            string statusMessage = reader["StatusMessage"].ToString();
-                            if (rowsAffected > 0 && statusMessage.Equals("Success", StringComparison.OrdinalIgnoreCase)) {
-                                success = true;
-                            } else {
-                                Console.WriteLine($"Не удалось обновить статус: {statusMessage}");
-                            }
-                        }
-                    }
-                }
-            } catch (SqlException ex) {
-                Console.WriteLine($"Ошибка SQL при обновлении статуса: {ex.Message}");
-            } catch (Exception ex) {
-                Console.WriteLine($"Общая ошибка при обновлении статуса: {ex.Message}");
-            } finally {
-                dbConnection.CloseConnection();
-            }
-            return success;
-        }
+        // Removed BecomeWriter method as 'updateUserWriterStatus' procedure was removed.
+        // Admin assignment is handled differently now.
         public void Dispose() {
             if (dbConnection != null) {
                 dbConnection.Dispose();

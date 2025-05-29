@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -10,7 +10,7 @@ namespace bookservice {
     public partial class CatalogForm : Form {
         private CatalogSQL catalogSql;
         private User user;
-        private List<string> allNovelTitles;
+        private List<string> allBookTitles; // Renamed from allNovelTitles
         private List<string> allGenres;
 
         private const int CoverWidth = 288;
@@ -38,7 +38,8 @@ namespace bookservice {
             InitializeCustomComponents();
             LoadInitialData();
             UpdateFilterControlsLayout();
-            DisplayWebnovels();
+            DisplayBooks(); // Renamed from DisplayWebnovels
+            AdminCheck(); // Check for admin status to show/hide create button
         }
 
         private void InitializeCustomComponents() {
@@ -48,7 +49,7 @@ namespace bookservice {
         }
 
         private void LoadInitialData() {
-            allNovelTitles = catalogSql.GetWebnovelTitles();
+            allBookTitles = catalogSql.GetBookTitles(); // Renamed from GetWebnovelTitles
             allGenres = catalogSql.GetGenres();
 
             foreach (string genre in allGenres) {
@@ -93,7 +94,7 @@ namespace bookservice {
             suggestionsListBox.Left = searchLabel.Left;
             suggestionsListBox.Width = searchLabel.Width;
 
-            novelsFlowPanel.Left = StartXBase;
+            novelsFlowPanel.Left = StartXBase; // Assuming novelsFlowPanel is for books
             novelsFlowPanel.Top = genresFilterButton.Bottom + 30;
             novelsFlowPanel.Size = new Size(this.ClientSize.Width - StartXBase, this.ClientSize.Height - 145);
 
@@ -102,18 +103,24 @@ namespace bookservice {
             authButton.Padding = new Padding(10, 0, 10, 0);
             authButton.MinimumSize = new Size(100, 35);
             authButton.Location = new Point(StartXBase + CoverWidth * 4 + HorizontalMargin * 3 - authButton.Width, 35);
+            
+            createBookButton.AutoSize = true; 
+            createBookButton.Height = 35;
+            createBookButton.Padding = new Padding(10, 0, 10, 0);
+            createBookButton.MinimumSize = new Size(100, 35);
+            createBookButton.Location = new Point(authButton.Left - createBookButton.Width - 10, 35);
 
-            createNovelButton.AutoSize = true;
-            createNovelButton.Height = 35;
-            createNovelButton.Padding = new Padding(10, 0, 10, 0);
-            createNovelButton.MinimumSize = new Size(100, 35);
-            createNovelButton.Location = new Point(authButton.Left - createNovelButton.Width - 10, 35);
+            historyButton.AutoSize = true;
+            historyButton.Height = 35;
+            historyButton.Padding = new Padding(10, 0, 7, 0);
+            historyButton.MinimumSize = new Size(100, 35);
+            historyButton.Location = new Point(authButton.Right - historyButton.Width, authButton.Bottom + 10);
         }
         private void CatalogForm_Click(object sender, EventArgs e) {
-            novelsFlowPanel.Focus();
+            novelsFlowPanel.Focus(); // Assuming novelsFlowPanel is for books
         }
-        private void DisplayWebnovels() {
-            novelsFlowPanel.Controls.Clear();
+        private void DisplayBooks() { // Renamed from DisplayWebnovels
+            novelsFlowPanel.Controls.Clear(); // Assuming novelsFlowPanel is for books
             catalogSql.SetSearchTerm(searchTextBox.Text == SearchPlaceholderText ? "" : searchTextBox.Text);
             catalogSql.SetSelectedGenres(selectedGenresFilter);
             catalogSql.SetSelectedAgeRatings(selectedAgeRatingsFilter);
@@ -125,25 +132,25 @@ namespace bookservice {
                 sortDirection = "DESC";
             catalogSql.SetSortByYearDirection(sortDirection);
 
-            DataTable novelsData = catalogSql.GetWebnovels();
+            DataTable booksData = catalogSql.GetBooks(); // Renamed from GetWebnovels
 
-            if (novelsData == null || novelsData.Rows.Count == 0) {
+            if (booksData == null || booksData.Rows.Count == 0) {
                 Label noResultsLabel = new Label {
                     Text = "По вашему запросу ничего не найдено.",
                     Font = new Font("Verdana", 16, FontStyle.Regular),
                     ForeColor = Color.Gray,
                     AutoSize = true,
                 };
-                novelsFlowPanel.Controls.Add(noResultsLabel);
+                novelsFlowPanel.Controls.Add(noResultsLabel); // Assuming novelsFlowPanel is for books
                 return;
             }
 
-            foreach (DataRow row in novelsData.Rows) {
-                string novelId = row["id"].ToString();
+            foreach (DataRow row in booksData.Rows) {
+                string bookId = row["id"].ToString(); // Changed from novelId
                 string coverPath = row["cover_path"]?.ToString();
                 string title = row["title"]?.ToString();
 
-                Panel novelPanel = new Panel {
+                Panel bookPanel = new Panel { // Renamed from novelPanel
                     Width = CoverWidth,
                     Height = CoverHeight + LabelHeight,
                     Margin = new Padding(0, 0, HorizontalMargin, VerticalMargin)
@@ -154,13 +161,13 @@ namespace bookservice {
                     Height = CoverHeight,
                     SizeMode = PictureBoxSizeMode.StretchImage,
                     BorderStyle = BorderStyle.None,
-                    Tag = novelId
+                    Tag = bookId // Changed from novelId
                 };
                 pictureBox.Click += PictureBox_Click;
 
                 try {
-                    if (!string.IsNullOrEmpty(coverPath) && File.Exists(coverPath))
-                        pictureBox.Image = Image.FromFile(coverPath);
+                    if (!string.IsNullOrEmpty(coverPath) && File.Exists(GetAbsolutePath(coverPath))) // Added GetAbsolutePath
+                        pictureBox.Image = Image.FromFile(GetAbsolutePath(coverPath));
                     else
                         pictureBox.Image = CreatePlaceholderImage(CoverWidth, CoverHeight);
                 } catch (Exception ex) {
@@ -178,11 +185,17 @@ namespace bookservice {
                     Location = new Point(0, CoverHeight)
                 };
 
-                novelPanel.Controls.Add(pictureBox);
-                novelPanel.Controls.Add(titleLabel);
-                novelsFlowPanel.Controls.Add(novelPanel);
+                bookPanel.Controls.Add(pictureBox); // Renamed from novelPanel
+                bookPanel.Controls.Add(titleLabel); // Renamed from novelPanel
+                novelsFlowPanel.Controls.Add(bookPanel); // Assuming novelsFlowPanel is for books
             }
-            novelsFlowPanel.Focus();
+            novelsFlowPanel.Focus(); // Assuming novelsFlowPanel is for books
+        }
+        private string GetAbsolutePath(string relativePath) {
+            if (string.IsNullOrEmpty(relativePath) || Path.IsPathRooted(relativePath))
+                return relativePath;
+            string basePath = AppDomain.CurrentDomain.BaseDirectory;
+            return Path.GetFullPath(Path.Combine(basePath, relativePath));
         }
 
         private Bitmap CreatePlaceholderImage(int width, int height) {
@@ -240,7 +253,7 @@ namespace bookservice {
 
             if (searchTextBox.Focused && searchTextBox.Text != SearchPlaceholderText && searchTextBox.Text.Length > 0) {
                 string searchText = searchTextBox.Text.ToLower();
-                var filteredTitles = allNovelTitles
+                var filteredTitles = allBookTitles // Renamed from allNovelTitles
                     .Where(title => title.ToLower().Contains(searchText))
                     .Take(5)
                     .ToList();
@@ -261,7 +274,7 @@ namespace bookservice {
             if (e.KeyCode == Keys.Enter) {
                 e.SuppressKeyPress = true;
                 suggestionsListBox.Visible = false;
-                DisplayWebnovels();
+                DisplayBooks(); // Renamed from DisplayWebnovels
             } else if (e.KeyCode == Keys.Down && suggestionsListBox.Visible && suggestionsListBox.Items.Count > 0) {
                 e.SuppressKeyPress = true;
                 suggestionsListBox.Focus();
@@ -277,8 +290,8 @@ namespace bookservice {
             searchTextBox.Text = SearchPlaceholderText;
             clearSearchButton.Visible = false;
             suggestionsListBox.Visible = false;
-            DisplayWebnovels();
-            novelsFlowPanel.Focus();
+            DisplayBooks(); // Renamed from DisplayWebnovels
+            novelsFlowPanel.Focus(); // Assuming novelsFlowPanel is for books
         }
 
         private void SuggestionsListBox_KeyDown(object sender, KeyEventArgs e) {
@@ -290,7 +303,7 @@ namespace bookservice {
                     searchTextBox.Select(searchTextBox.Text.Length, 0);
                     suggestionsListBox.Visible = false;
                     if (e.KeyCode == Keys.Enter) {
-                        DisplayWebnovels();
+                        DisplayBooks(); // Renamed from DisplayWebnovels
                     }
                 }
             } else if (e.KeyCode == Keys.Escape) {
@@ -305,12 +318,12 @@ namespace bookservice {
                 searchTextBox.Focus();
                 searchTextBox.Select(searchTextBox.Text.Length, 0);
                 suggestionsListBox.Visible = false;
-                DisplayWebnovels();
-                novelsFlowPanel.Focus();
+                DisplayBooks(); // Renamed from DisplayWebnovels
+                novelsFlowPanel.Focus(); // Assuming novelsFlowPanel is for books
             }
         }
         private void AuthButton_Click(object sender, EventArgs e) {
-            if (Application.OpenForms.Count == 1) {
+            if (Application.OpenForms.OfType<AuthorizationForm>().Count() == 0) { // Ensure only one instance
                 AuthorizationForm authorizationForm = new AuthorizationForm();
                 authorizationForm.Owner = this;
                 this.Hide();
@@ -337,7 +350,7 @@ namespace bookservice {
                 selectedGenresFilter.Remove(genreName);
             }
             UpdateGenresFilterButtonText();
-            DisplayWebnovels();
+            DisplayBooks(); // Renamed from DisplayWebnovels
             UpdateFilterControlsLayout();
         }
 
@@ -349,7 +362,7 @@ namespace bookservice {
                 }
             }
             UpdateGenresFilterButtonText();
-            DisplayWebnovels();
+            DisplayBooks(); // Renamed from DisplayWebnovels
             UpdateFilterControlsLayout();
         }
 
@@ -380,7 +393,7 @@ namespace bookservice {
                 selectedAgeRatingsFilter.Remove(ageRating);
             }
             UpdateAgeRatingFilterButtonText();
-            DisplayWebnovels();
+            DisplayBooks(); // Renamed from DisplayWebnovels
             UpdateFilterControlsLayout();
         }
 
@@ -392,7 +405,7 @@ namespace bookservice {
                 }
             }
             UpdateAgeRatingFilterButtonText();
-            DisplayWebnovels();
+            DisplayBooks(); // Renamed from DisplayWebnovels
             UpdateFilterControlsLayout();
         }
 
@@ -420,54 +433,58 @@ namespace bookservice {
                     yearSortButton.Text = "📅 Год выпуска";
                     break;
             }
-            DisplayWebnovels();
+            DisplayBooks(); // Renamed from DisplayWebnovels
             UpdateFilterControlsLayout();
         }
 
         private void PictureBox_Click(object sender, EventArgs e) {
             PictureBox clickedPictureBox = sender as PictureBox;
-            if (Application.OpenForms.Count == 1 && clickedPictureBox != null && clickedPictureBox.Tag != null) {
-                selectedNovelID = clickedPictureBox.Tag.ToString();
-                BookForm novelForm = new BookForm();
-                novelForm.Owner = this;
+            if (Application.OpenForms.OfType<BookForm>().Count() == 0 && clickedPictureBox != null && clickedPictureBox.Tag != null) { // Ensure only one instance
+                selectedBookID = clickedPictureBox.Tag.ToString(); // Renamed from selectedNovelID
+                BookForm bookForm = new BookForm(); // Renamed from novelForm
+                bookForm.Owner = this;
                 this.Hide();
-                novelForm.Show();
+                bookForm.Show();
             }
         }
-        private string selectedNovelID;
-        public string GetSelectedNovelID {
-            get { return selectedNovelID; }
+        private string selectedBookID; // Renamed from selectedNovelID
+        public string GetSelectedBookID { // Renamed from GetSelectedNovelID
+            get { return selectedBookID; }
         }
         public User User {
             get { return user; }
             set {
                 user = value;
                 catalogSql.updateUser(user);
-                WriterCheck();
+                AdminCheck(); // Renamed from WriterCheck
             }
         }
-        private void WriterCheck() {
-            if (user.IsWriter == true)
-                createNovelButton.Visible = true;
+        private void AdminCheck() { // Renamed from WriterCheck
+            if (user.IsAdmin == true) // Changed from IsWriter
+                createBookButton.Visible = true; // Assuming createNovelButton is createBookButton
             else
-                createNovelButton.Visible = false;
+                createBookButton.Visible = false; // Assuming createNovelButton is createBookButton
+            if (user.Id != 0)
+                historyButton.Visible = true;
+            else
+                historyButton.Visible = false;
         }
-        private void CreateNovelButton_Click(object sender, EventArgs e) {
-            if (Application.OpenForms.Count == 1) {
-                selectedNovelID = "0";
-                BookForm novelForm = new BookForm();
-                novelForm.Owner = this;
+        private void CreateBookButton_Click(object sender, EventArgs e) { // Renamed from CreateNovelButton_Click
+            if (Application.OpenForms.OfType<BookForm>().Count() == 0) { // Ensure only one instance
+                selectedBookID = "0"; // Renamed from selectedNovelID
+                BookForm bookForm = new BookForm(); // Renamed from novelForm
+                bookForm.Owner = this;
                 this.Hide();
-                novelForm.Show();
+                bookForm.Show();
             }
         }
         private void CatalogForm_FormClosing(object sender, FormClosingEventArgs e) {
             if (catalogSql != null) {
                 catalogSql.Dispose();
             }
-            foreach (Control panelControl in novelsFlowPanel.Controls) {
-                if (panelControl is Panel novelPanel) {
-                    foreach (Control itemControl in novelPanel.Controls) {
+            foreach (Control panelControl in novelsFlowPanel.Controls) { // Assuming novelsFlowPanel is for books
+                if (panelControl is Panel bookPanel) { // Renamed from novelPanel
+                    foreach (Control itemControl in bookPanel.Controls) {
                         if (itemControl is PictureBox pb && pb.Image != null) {
                             pb.Image.Dispose();
                         }
@@ -475,10 +492,16 @@ namespace bookservice {
                 }
                 panelControl.Dispose();
             }
-            novelsFlowPanel.Controls.Clear();
+            novelsFlowPanel.Controls.Clear(); // Assuming novelsFlowPanel is for books
         }
         private void CatalogForm_Activated(object sender, EventArgs e) {
-            if (catalogSql != null) DisplayWebnovels();
+            // Refresh data when form is activated, e.g., after closing BookForm or AuthForm
+            if (catalogSql != null)
+            {
+                allBookTitles = catalogSql.GetBookTitles(); // Refresh titles for search suggestions
+                DisplayBooks();
+                AdminCheck(); // Re-check admin status for create button
+            }
         }
     }
 }

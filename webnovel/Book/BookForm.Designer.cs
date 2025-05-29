@@ -1,4 +1,4 @@
-﻿namespace webnovel
+﻿namespace bookservice
 {
     partial class BookForm
     {
@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.novelTabControl = new System.Windows.Forms.TabControl();
-            this.novelTabPage = new System.Windows.Forms.TabPage();
+            this.bookTabControl = new System.Windows.Forms.TabControl();
+            this.bookTabPage = new System.Windows.Forms.TabPage();
             this.descriptionLabel = new System.Windows.Forms.Label();
             this.ageRatingLabel = new System.Windows.Forms.Label();
             this.yearLabel = new System.Windows.Forms.Label();
@@ -45,12 +45,14 @@
             this.postCommentButton = new System.Windows.Forms.Button();
             this.newCommentTextBox = new System.Windows.Forms.TextBox();
             this.commentsTitleLabel = new System.Windows.Forms.Label();
-            this.editNovelTabPage = new System.Windows.Forms.TabPage();
-            this.deleteNovelButton = new System.Windows.Forms.Button();
+            this.editBookTabPage = new System.Windows.Forms.TabPage();
+            this.deleteBookButton = new System.Windows.Forms.Button();
             this.addFileButton = new System.Windows.Forms.Button();
-            this.createNovelTabPage = new System.Windows.Forms.TabPage();
+            this.createBookTabPage = new System.Windows.Forms.TabPage();
+            this.createWriterNameTextBox = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.createGenresCheckedListBox = new System.Windows.Forms.CheckedListBox();
-            this.createNovelButton = new System.Windows.Forms.Button();
+            this.createBookButton = new System.Windows.Forms.Button();
             this.createSelectCoverButton = new System.Windows.Forms.Button();
             this.createDescriptionTextBox = new System.Windows.Forms.TextBox();
             this.createAgeRatingListBox = new System.Windows.Forms.ListBox();
@@ -66,44 +68,44 @@
             this.openNovelFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.openCoverFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveNovelFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.novelTabControl.SuspendLayout();
-            this.novelTabPage.SuspendLayout();
+            this.bookTabControl.SuspendLayout();
+            this.bookTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.coverPictureBox)).BeginInit();
             this.commentsTabPage.SuspendLayout();
-            this.editNovelTabPage.SuspendLayout();
-            this.createNovelTabPage.SuspendLayout();
+            this.editBookTabPage.SuspendLayout();
+            this.createBookTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
-            // novelTabControl
+            // bookTabControl
             // 
-            this.novelTabControl.Controls.Add(this.novelTabPage);
-            this.novelTabControl.Controls.Add(this.commentsTabPage);
-            this.novelTabControl.Controls.Add(this.editNovelTabPage);
-            this.novelTabControl.Controls.Add(this.createNovelTabPage);
-            this.novelTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.novelTabControl.Location = new System.Drawing.Point(0, 0);
-            this.novelTabControl.Name = "novelTabControl";
-            this.novelTabControl.SelectedIndex = 0;
-            this.novelTabControl.Size = new System.Drawing.Size(1354, 856);
-            this.novelTabControl.TabIndex = 0;
+            this.bookTabControl.Controls.Add(this.bookTabPage);
+            this.bookTabControl.Controls.Add(this.commentsTabPage);
+            this.bookTabControl.Controls.Add(this.editBookTabPage);
+            this.bookTabControl.Controls.Add(this.createBookTabPage);
+            this.bookTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bookTabControl.Location = new System.Drawing.Point(0, 0);
+            this.bookTabControl.Name = "bookTabControl";
+            this.bookTabControl.SelectedIndex = 0;
+            this.bookTabControl.Size = new System.Drawing.Size(1354, 856);
+            this.bookTabControl.TabIndex = 0;
             // 
-            // novelTabPage
+            // bookTabPage
             // 
-            this.novelTabPage.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.novelTabPage.Controls.Add(this.descriptionLabel);
-            this.novelTabPage.Controls.Add(this.ageRatingLabel);
-            this.novelTabPage.Controls.Add(this.yearLabel);
-            this.novelTabPage.Controls.Add(this.genresFlowLayoutPanel);
-            this.novelTabPage.Controls.Add(this.authorLabel);
-            this.novelTabPage.Controls.Add(this.titleLabel);
-            this.novelTabPage.Controls.Add(this.downloadNovelLabelButton);
-            this.novelTabPage.Controls.Add(this.coverPictureBox);
-            this.novelTabPage.Location = new System.Drawing.Point(4, 29);
-            this.novelTabPage.Name = "novelTabPage";
-            this.novelTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.novelTabPage.Size = new System.Drawing.Size(1346, 823);
-            this.novelTabPage.TabIndex = 0;
-            this.novelTabPage.Text = "Информация";
+            this.bookTabPage.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.bookTabPage.Controls.Add(this.descriptionLabel);
+            this.bookTabPage.Controls.Add(this.ageRatingLabel);
+            this.bookTabPage.Controls.Add(this.yearLabel);
+            this.bookTabPage.Controls.Add(this.genresFlowLayoutPanel);
+            this.bookTabPage.Controls.Add(this.authorLabel);
+            this.bookTabPage.Controls.Add(this.titleLabel);
+            this.bookTabPage.Controls.Add(this.downloadNovelLabelButton);
+            this.bookTabPage.Controls.Add(this.coverPictureBox);
+            this.bookTabPage.Location = new System.Drawing.Point(8, 46);
+            this.bookTabPage.Name = "bookTabPage";
+            this.bookTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.bookTabPage.Size = new System.Drawing.Size(1338, 802);
+            this.bookTabPage.TabIndex = 0;
+            this.bookTabPage.Text = "Информация";
             // 
             // descriptionLabel
             // 
@@ -124,7 +126,7 @@
             this.ageRatingLabel.Location = new System.Drawing.Point(1031, 123);
             this.ageRatingLabel.Name = "ageRatingLabel";
             this.ageRatingLabel.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
-            this.ageRatingLabel.Size = new System.Drawing.Size(171, 37);
+            this.ageRatingLabel.Size = new System.Drawing.Size(255, 50);
             this.ageRatingLabel.TabIndex = 6;
             this.ageRatingLabel.Text = "🚫 {возраст}";
             // 
@@ -137,7 +139,7 @@
             this.yearLabel.Location = new System.Drawing.Point(851, 123);
             this.yearLabel.Name = "yearLabel";
             this.yearLabel.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
-            this.yearLabel.Size = new System.Drawing.Size(174, 37);
+            this.yearLabel.Size = new System.Drawing.Size(265, 50);
             this.yearLabel.TabIndex = 5;
             this.yearLabel.Text = "📅 Год: {год}";
             // 
@@ -158,7 +160,7 @@
             this.authorLabel.Location = new System.Drawing.Point(555, 123);
             this.authorLabel.Name = "authorLabel";
             this.authorLabel.Padding = new System.Windows.Forms.Padding(10, 5, 10, 5);
-            this.authorLabel.Size = new System.Drawing.Size(290, 37);
+            this.authorLabel.Size = new System.Drawing.Size(450, 50);
             this.authorLabel.TabIndex = 3;
             this.authorLabel.Text = "👤 Автор: {login автора}";
             // 
@@ -169,7 +171,7 @@
             this.titleLabel.Font = new System.Drawing.Font("Verdana", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.titleLabel.Location = new System.Drawing.Point(574, 41);
             this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(449, 41);
+            this.titleLabel.Size = new System.Drawing.Size(696, 65);
             this.titleLabel.TabIndex = 2;
             this.titleLabel.Text = "Название веб-романа";
             // 
@@ -212,10 +214,10 @@
             this.commentsTabPage.Controls.Add(this.postCommentButton);
             this.commentsTabPage.Controls.Add(this.newCommentTextBox);
             this.commentsTabPage.Controls.Add(this.commentsTitleLabel);
-            this.commentsTabPage.Location = new System.Drawing.Point(4, 29);
+            this.commentsTabPage.Location = new System.Drawing.Point(8, 46);
             this.commentsTabPage.Name = "commentsTabPage";
             this.commentsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.commentsTabPage.Size = new System.Drawing.Size(1346, 823);
+            this.commentsTabPage.Size = new System.Drawing.Size(1338, 802);
             this.commentsTabPage.TabIndex = 1;
             this.commentsTabPage.Text = "Комментарии";
             // 
@@ -260,34 +262,34 @@
             this.commentsTitleLabel.Font = new System.Drawing.Font("Verdana", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.commentsTitleLabel.Location = new System.Drawing.Point(90, 40);
             this.commentsTitleLabel.Name = "commentsTitleLabel";
-            this.commentsTitleLabel.Size = new System.Drawing.Size(297, 41);
+            this.commentsTitleLabel.Size = new System.Drawing.Size(463, 65);
             this.commentsTitleLabel.TabIndex = 0;
             this.commentsTitleLabel.Text = "Комментарии:";
             // 
-            // editNovelTabPage
+            // editBookTabPage
             // 
-            this.editNovelTabPage.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.editNovelTabPage.Controls.Add(this.deleteNovelButton);
-            this.editNovelTabPage.Controls.Add(this.addFileButton);
-            this.editNovelTabPage.Location = new System.Drawing.Point(4, 29);
-            this.editNovelTabPage.Name = "editNovelTabPage";
-            this.editNovelTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.editNovelTabPage.Size = new System.Drawing.Size(1346, 823);
-            this.editNovelTabPage.TabIndex = 2;
-            this.editNovelTabPage.Text = "Редактирование";
+            this.editBookTabPage.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.editBookTabPage.Controls.Add(this.deleteBookButton);
+            this.editBookTabPage.Controls.Add(this.addFileButton);
+            this.editBookTabPage.Location = new System.Drawing.Point(8, 46);
+            this.editBookTabPage.Name = "editBookTabPage";
+            this.editBookTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.editBookTabPage.Size = new System.Drawing.Size(1338, 802);
+            this.editBookTabPage.TabIndex = 2;
+            this.editBookTabPage.Text = "Редактирование";
             // 
-            // deleteNovelButton
+            // deleteBookButton
             // 
-            this.deleteNovelButton.BackColor = System.Drawing.SystemColors.Control;
-            this.deleteNovelButton.Font = new System.Drawing.Font("Verdana", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.deleteNovelButton.ForeColor = System.Drawing.Color.Red;
-            this.deleteNovelButton.Location = new System.Drawing.Point(413, 356);
-            this.deleteNovelButton.Name = "deleteNovelButton";
-            this.deleteNovelButton.Size = new System.Drawing.Size(542, 99);
-            this.deleteNovelButton.TabIndex = 1;
-            this.deleteNovelButton.Text = "Удалить книгу";
-            this.deleteNovelButton.UseVisualStyleBackColor = false;
-            this.deleteNovelButton.Click += new System.EventHandler(this.deleteNovelButton_Click);
+            this.deleteBookButton.BackColor = System.Drawing.SystemColors.Control;
+            this.deleteBookButton.Font = new System.Drawing.Font("Verdana", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.deleteBookButton.ForeColor = System.Drawing.Color.Red;
+            this.deleteBookButton.Location = new System.Drawing.Point(413, 356);
+            this.deleteBookButton.Name = "deleteBookButton";
+            this.deleteBookButton.Size = new System.Drawing.Size(542, 99);
+            this.deleteBookButton.TabIndex = 1;
+            this.deleteBookButton.Text = "Удалить книгу";
+            this.deleteBookButton.UseVisualStyleBackColor = false;
+            this.deleteBookButton.Click += new System.EventHandler(this.deleteBookButton_Click);
             // 
             // addFileButton
             // 
@@ -301,30 +303,50 @@
             this.addFileButton.UseVisualStyleBackColor = false;
             this.addFileButton.Click += new System.EventHandler(this.addFileButton_Click);
             // 
-            // createNovelTabPage
+            // createBookTabPage
             // 
-            this.createNovelTabPage.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.createNovelTabPage.Controls.Add(this.createGenresCheckedListBox);
-            this.createNovelTabPage.Controls.Add(this.createNovelButton);
-            this.createNovelTabPage.Controls.Add(this.createSelectCoverButton);
-            this.createNovelTabPage.Controls.Add(this.createDescriptionTextBox);
-            this.createNovelTabPage.Controls.Add(this.createAgeRatingListBox);
-            this.createNovelTabPage.Controls.Add(this.createYearTextBox);
-            this.createNovelTabPage.Controls.Add(this.createTitleTextBox);
-            this.createNovelTabPage.Controls.Add(this.createGenresPromptLabel);
-            this.createNovelTabPage.Controls.Add(this.createCoverPathLabel);
-            this.createNovelTabPage.Controls.Add(this.createCoverPromptLabel);
-            this.createNovelTabPage.Controls.Add(this.createDescriptionPromptLabel);
-            this.createNovelTabPage.Controls.Add(this.createAgeRatingPromptLabel);
-            this.createNovelTabPage.Controls.Add(this.createYearPromptLabel);
-            this.createNovelTabPage.Controls.Add(this.createTitlePromptLabel);
-            this.createNovelTabPage.Font = new System.Drawing.Font("Verdana", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.createNovelTabPage.Location = new System.Drawing.Point(4, 29);
-            this.createNovelTabPage.Name = "createNovelTabPage";
-            this.createNovelTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.createNovelTabPage.Size = new System.Drawing.Size(1346, 823);
-            this.createNovelTabPage.TabIndex = 3;
-            this.createNovelTabPage.Text = "Создание веб-романа";
+            this.createBookTabPage.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.createBookTabPage.Controls.Add(this.createWriterNameTextBox);
+            this.createBookTabPage.Controls.Add(this.label1);
+            this.createBookTabPage.Controls.Add(this.createGenresCheckedListBox);
+            this.createBookTabPage.Controls.Add(this.createBookButton);
+            this.createBookTabPage.Controls.Add(this.createSelectCoverButton);
+            this.createBookTabPage.Controls.Add(this.createDescriptionTextBox);
+            this.createBookTabPage.Controls.Add(this.createAgeRatingListBox);
+            this.createBookTabPage.Controls.Add(this.createYearTextBox);
+            this.createBookTabPage.Controls.Add(this.createTitleTextBox);
+            this.createBookTabPage.Controls.Add(this.createGenresPromptLabel);
+            this.createBookTabPage.Controls.Add(this.createCoverPathLabel);
+            this.createBookTabPage.Controls.Add(this.createCoverPromptLabel);
+            this.createBookTabPage.Controls.Add(this.createDescriptionPromptLabel);
+            this.createBookTabPage.Controls.Add(this.createAgeRatingPromptLabel);
+            this.createBookTabPage.Controls.Add(this.createYearPromptLabel);
+            this.createBookTabPage.Controls.Add(this.createTitlePromptLabel);
+            this.createBookTabPage.Font = new System.Drawing.Font("Verdana", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.createBookTabPage.Location = new System.Drawing.Point(8, 46);
+            this.createBookTabPage.Name = "createBookTabPage";
+            this.createBookTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.createBookTabPage.Size = new System.Drawing.Size(1338, 802);
+            this.createBookTabPage.TabIndex = 3;
+            this.createBookTabPage.Text = "Создание веб-романа";
+            // 
+            // createWriterNameTextBox
+            // 
+            this.createWriterNameTextBox.BackColor = System.Drawing.SystemColors.Control;
+            this.createWriterNameTextBox.Location = new System.Drawing.Point(565, 91);
+            this.createWriterNameTextBox.MaxLength = 100;
+            this.createWriterNameTextBox.Name = "createWriterNameTextBox";
+            this.createWriterNameTextBox.Size = new System.Drawing.Size(391, 52);
+            this.createWriterNameTextBox.TabIndex = 15;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(393, 94);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(147, 45);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Автор:";
             // 
             // createGenresCheckedListBox
             // 
@@ -332,19 +354,19 @@
             this.createGenresCheckedListBox.FormattingEnabled = true;
             this.createGenresCheckedListBox.Location = new System.Drawing.Point(566, 421);
             this.createGenresCheckedListBox.Name = "createGenresCheckedListBox";
-            this.createGenresCheckedListBox.Size = new System.Drawing.Size(391, 124);
+            this.createGenresCheckedListBox.Size = new System.Drawing.Size(391, 102);
             this.createGenresCheckedListBox.TabIndex = 13;
             // 
-            // createNovelButton
+            // createBookButton
             // 
-            this.createNovelButton.Font = new System.Drawing.Font("Verdana", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.createNovelButton.Location = new System.Drawing.Point(401, 560);
-            this.createNovelButton.Name = "createNovelButton";
-            this.createNovelButton.Size = new System.Drawing.Size(556, 80);
-            this.createNovelButton.TabIndex = 12;
-            this.createNovelButton.Text = "Создать веб-роман";
-            this.createNovelButton.UseVisualStyleBackColor = true;
-            this.createNovelButton.Click += new System.EventHandler(this.createNovelButton_Click);
+            this.createBookButton.Font = new System.Drawing.Font("Verdana", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.createBookButton.Location = new System.Drawing.Point(401, 560);
+            this.createBookButton.Name = "createBookButton";
+            this.createBookButton.Size = new System.Drawing.Size(556, 80);
+            this.createBookButton.TabIndex = 12;
+            this.createBookButton.Text = "Создать веб-роман";
+            this.createBookButton.UseVisualStyleBackColor = true;
+            this.createBookButton.Click += new System.EventHandler(this.createBookButton_Click);
             // 
             // createSelectCoverButton
             // 
@@ -371,7 +393,7 @@
             // 
             this.createAgeRatingListBox.BackColor = System.Drawing.SystemColors.Control;
             this.createAgeRatingListBox.FormattingEnabled = true;
-            this.createAgeRatingListBox.ItemHeight = 28;
+            this.createAgeRatingListBox.ItemHeight = 45;
             this.createAgeRatingListBox.Items.AddRange(new object[] {
             "0+",
             "13+",
@@ -379,7 +401,7 @@
             "18+"});
             this.createAgeRatingListBox.Location = new System.Drawing.Point(566, 177);
             this.createAgeRatingListBox.Name = "createAgeRatingListBox";
-            this.createAgeRatingListBox.Size = new System.Drawing.Size(391, 60);
+            this.createAgeRatingListBox.Size = new System.Drawing.Size(391, 49);
             this.createAgeRatingListBox.TabIndex = 9;
             // 
             // createYearTextBox
@@ -388,16 +410,16 @@
             this.createYearTextBox.Location = new System.Drawing.Point(566, 136);
             this.createYearTextBox.MaxLength = 4;
             this.createYearTextBox.Name = "createYearTextBox";
-            this.createYearTextBox.Size = new System.Drawing.Size(391, 35);
+            this.createYearTextBox.Size = new System.Drawing.Size(391, 52);
             this.createYearTextBox.TabIndex = 8;
             // 
             // createTitleTextBox
             // 
             this.createTitleTextBox.BackColor = System.Drawing.SystemColors.Control;
-            this.createTitleTextBox.Location = new System.Drawing.Point(566, 95);
+            this.createTitleTextBox.Location = new System.Drawing.Point(566, 40);
             this.createTitleTextBox.MaxLength = 100;
             this.createTitleTextBox.Name = "createTitleTextBox";
-            this.createTitleTextBox.Size = new System.Drawing.Size(391, 35);
+            this.createTitleTextBox.Size = new System.Drawing.Size(391, 52);
             this.createTitleTextBox.TabIndex = 7;
             // 
             // createGenresPromptLabel
@@ -405,7 +427,7 @@
             this.createGenresPromptLabel.AutoSize = true;
             this.createGenresPromptLabel.Location = new System.Drawing.Point(396, 469);
             this.createGenresPromptLabel.Name = "createGenresPromptLabel";
-            this.createGenresPromptLabel.Size = new System.Drawing.Size(105, 28);
+            this.createGenresPromptLabel.Size = new System.Drawing.Size(171, 45);
             this.createGenresPromptLabel.TabIndex = 6;
             this.createGenresPromptLabel.Text = "Жанры:\r\n";
             this.createGenresPromptLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -415,7 +437,7 @@
             this.createCoverPathLabel.AutoSize = true;
             this.createCoverPathLabel.Location = new System.Drawing.Point(975, 372);
             this.createCoverPathLabel.Name = "createCoverPathLabel";
-            this.createCoverPathLabel.Size = new System.Drawing.Size(208, 28);
+            this.createCoverPathLabel.Size = new System.Drawing.Size(334, 45);
             this.createCoverPathLabel.TabIndex = 5;
             this.createCoverPathLabel.Text = "Файл не выбран";
             // 
@@ -424,7 +446,7 @@
             this.createCoverPromptLabel.AutoSize = true;
             this.createCoverPromptLabel.Location = new System.Drawing.Point(396, 372);
             this.createCoverPromptLabel.Name = "createCoverPromptLabel";
-            this.createCoverPromptLabel.Size = new System.Drawing.Size(128, 28);
+            this.createCoverPromptLabel.Size = new System.Drawing.Size(208, 45);
             this.createCoverPromptLabel.TabIndex = 4;
             this.createCoverPromptLabel.Text = "Обложка:";
             // 
@@ -433,7 +455,7 @@
             this.createDescriptionPromptLabel.AutoSize = true;
             this.createDescriptionPromptLabel.Location = new System.Drawing.Point(396, 283);
             this.createDescriptionPromptLabel.Name = "createDescriptionPromptLabel";
-            this.createDescriptionPromptLabel.Size = new System.Drawing.Size(140, 28);
+            this.createDescriptionPromptLabel.Size = new System.Drawing.Size(226, 45);
             this.createDescriptionPromptLabel.TabIndex = 3;
             this.createDescriptionPromptLabel.Text = "Описание:";
             // 
@@ -442,7 +464,7 @@
             this.createAgeRatingPromptLabel.AutoSize = true;
             this.createAgeRatingPromptLabel.Location = new System.Drawing.Point(396, 193);
             this.createAgeRatingPromptLabel.Name = "createAgeRatingPromptLabel";
-            this.createAgeRatingPromptLabel.Size = new System.Drawing.Size(115, 28);
+            this.createAgeRatingPromptLabel.Size = new System.Drawing.Size(186, 45);
             this.createAgeRatingPromptLabel.TabIndex = 2;
             this.createAgeRatingPromptLabel.Text = "Возраст:";
             // 
@@ -451,16 +473,16 @@
             this.createYearPromptLabel.AutoSize = true;
             this.createYearPromptLabel.Location = new System.Drawing.Point(396, 139);
             this.createYearPromptLabel.Name = "createYearPromptLabel";
-            this.createYearPromptLabel.Size = new System.Drawing.Size(143, 28);
+            this.createYearPromptLabel.Size = new System.Drawing.Size(234, 45);
             this.createYearPromptLabel.TabIndex = 1;
             this.createYearPromptLabel.Text = "Год (ГГГГ):";
             // 
             // createTitlePromptLabel
             // 
             this.createTitlePromptLabel.AutoSize = true;
-            this.createTitlePromptLabel.Location = new System.Drawing.Point(396, 98);
+            this.createTitlePromptLabel.Location = new System.Drawing.Point(396, 43);
             this.createTitlePromptLabel.Name = "createTitlePromptLabel";
-            this.createTitlePromptLabel.Size = new System.Drawing.Size(137, 28);
+            this.createTitlePromptLabel.Size = new System.Drawing.Size(220, 45);
             this.createTitlePromptLabel.TabIndex = 0;
             this.createTitlePromptLabel.Text = "Название:";
             // 
@@ -479,42 +501,42 @@
             this.saveNovelFileDialog.Filter = "EPUB файлы (*.epub)|*.epub";
             this.saveNovelFileDialog.Title = "Сохранить файл веб-романа";
             // 
-            // NovelForm
+            // BookForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(17F, 32F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.ClientSize = new System.Drawing.Size(1354, 856);
-            this.Controls.Add(this.novelTabControl);
+            this.Controls.Add(this.bookTabControl);
             this.Font = new System.Drawing.Font("Verdana", 10.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
-            this.Name = "NovelForm";
+            this.Name = "BookForm";
             this.Text = "Веб-роман";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.NovelForm_FormClosed);
             this.Load += new System.EventHandler(this.NovelForm_Load);
-            this.novelTabControl.ResumeLayout(false);
-            this.novelTabPage.ResumeLayout(false);
-            this.novelTabPage.PerformLayout();
+            this.bookTabControl.ResumeLayout(false);
+            this.bookTabPage.ResumeLayout(false);
+            this.bookTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.coverPictureBox)).EndInit();
             this.commentsTabPage.ResumeLayout(false);
             this.commentsTabPage.PerformLayout();
-            this.editNovelTabPage.ResumeLayout(false);
-            this.createNovelTabPage.ResumeLayout(false);
-            this.createNovelTabPage.PerformLayout();
+            this.editBookTabPage.ResumeLayout(false);
+            this.createBookTabPage.ResumeLayout(false);
+            this.createBookTabPage.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TabControl novelTabControl;
-        private System.Windows.Forms.TabPage novelTabPage;
+        private System.Windows.Forms.TabControl bookTabControl;
+        private System.Windows.Forms.TabPage bookTabPage;
         private System.Windows.Forms.PictureBox coverPictureBox;
         private System.Windows.Forms.TabPage commentsTabPage;
-        private System.Windows.Forms.TabPage editNovelTabPage;
-        private System.Windows.Forms.TabPage createNovelTabPage;
+        private System.Windows.Forms.TabPage editBookTabPage;
+        private System.Windows.Forms.TabPage createBookTabPage;
         private System.Windows.Forms.Label downloadNovelLabelButton;
         private System.Windows.Forms.Label titleLabel;
         private System.Windows.Forms.ContextMenuStrip novelFilesContextMenuStrip;
@@ -527,7 +549,7 @@
         private System.Windows.Forms.TextBox newCommentTextBox;
         private System.Windows.Forms.Panel commentsHostPanel;
         private System.Windows.Forms.Button postCommentButton;
-        private System.Windows.Forms.Button deleteNovelButton;
+        private System.Windows.Forms.Button deleteBookButton;
         private System.Windows.Forms.Button addFileButton;
         private System.Windows.Forms.ListBox createAgeRatingListBox;
         private System.Windows.Forms.TextBox createYearTextBox;
@@ -540,11 +562,13 @@
         private System.Windows.Forms.Label createYearPromptLabel;
         private System.Windows.Forms.Label createTitlePromptLabel;
         private System.Windows.Forms.CheckedListBox createGenresCheckedListBox;
-        private System.Windows.Forms.Button createNovelButton;
+        private System.Windows.Forms.Button createBookButton;
         private System.Windows.Forms.Button createSelectCoverButton;
         private System.Windows.Forms.TextBox createDescriptionTextBox;
         private System.Windows.Forms.OpenFileDialog openNovelFileDialog;
         private System.Windows.Forms.OpenFileDialog openCoverFileDialog;
         private System.Windows.Forms.SaveFileDialog saveNovelFileDialog;
+        private System.Windows.Forms.TextBox createWriterNameTextBox;
+        private System.Windows.Forms.Label label1;
     }
 }

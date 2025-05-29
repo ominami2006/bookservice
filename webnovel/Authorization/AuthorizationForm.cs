@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -48,11 +48,9 @@ namespace bookservice {
         }
         private void UpdateAccountPageInfo() {
             if (user != null && user.Id != 0) {
-                userInfoLabel.Text = $"Логин: {user.Login}\nСтатус: {(user.IsWriter ? "Писатель" : "Читатель")}";
-                becomeWriterButton.Visible = !user.IsWriter;
+                userInfoLabel.Text = $"Логин: {user.Login}\nСтатус: {(user.IsAdmin ? "Администратор" : "Читатель")}"; // Changed from IsWriter
             } else {
                 userInfoLabel.Text = "Вы не авторизованы.";
-                becomeWriterButton.Visible = false;
             }
         }
         private void AuthButton_Click(object sender, EventArgs e) {
@@ -65,7 +63,7 @@ namespace bookservice {
             User loggedInUser = authorizationSql.CheckLogin(login, password);
             if (loggedInUser != null) {
                 user = loggedInUser;
-                user.Role = user.IsWriter ? UserRole.WN_WRITER : UserRole.WN_READER;
+                user.Role = user.IsAdmin ? UserRole.ADMIN : UserRole.READER; // Changed from IsWriter and WN_WRITER/WN_READER
                 authorizationSql.updateUser(user);
                 if (catalogForm != null)
                     catalogForm.User = user;
@@ -83,7 +81,8 @@ namespace bookservice {
             string login = registerLoginTextBox.Text;
             string password = registerPasswordTextBox.Text;
             string confirmPassword = registerConfirmPasswordTextBox.Text;
-            bool isWriter = registerIsWriterCheckBox.Checked;
+            bool isAdmin = false;
+
             if (string.IsNullOrWhiteSpace(login) || string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(confirmPassword)) {
                 MessageBox.Show("Пожалуйста, заполните все поля.", "Ошибка ввода", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -95,10 +94,10 @@ namespace bookservice {
                 registerPasswordTextBox.Focus();
                 return;
             }
-            User registeredUser = authorizationSql.RegisterUser(login, password, isWriter);
+            User registeredUser = authorizationSql.RegisterUser(login, password, isAdmin); // Pass isAdmin
             if (registeredUser != null) {
                 this.user = registeredUser;
-                this.user.Role = this.user.IsWriter ? UserRole.WN_WRITER : UserRole.WN_READER;
+                this.user.Role = this.user.IsAdmin ? UserRole.ADMIN : UserRole.READER; // Changed from IsWriter
                 authorizationSql.updateUser(this.user);
                 if (catalogForm != null)
                     catalogForm.User = this.user;
@@ -108,33 +107,17 @@ namespace bookservice {
                 registerLoginTextBox.Clear();
                 registerPasswordTextBox.Clear();
                 registerConfirmPasswordTextBox.Clear();
-                registerIsWriterCheckBox.Checked = false;
             } else {
+                // Error message is handled by RegisterUser method (console output)
+                // Optionally, show a generic error message here too.
+                 MessageBox.Show("Ошибка регистрации. Возможно, такой логин уже существует.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 registerLoginTextBox.Focus();
             }
         }
-        private void BecomeWriterButton_Click(object sender, EventArgs e) {
-            if (user == null || user.Id == 0) {
-                MessageBox.Show("Сначала авторизуйтесь.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-            DialogResult result = MessageBox.Show("Вы уверены, что хотите стать писателем? Это действие нельзя будет отменить через интерфейс.",
-                                                 "Подтверждение", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (result == DialogResult.Yes) {
-                if (authorizationSql.BecomeWriter(user.Id)) {
-                    user.IsWriter = true;
-                    user.Role = UserRole.WN_WRITER;
-                    authorizationSql.updateUser(this.user);
-                    if (catalogForm != null)
-                        catalogForm.User = this.user;
-                    MessageBox.Show("Поздравляем! Теперь вы писатель.", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    UpdateAccountPageInfo();
-                } else {
-                }
-            }
-        }
+        // BecomeWriterButton_Click is removed as the functionality for a user to become a writer (now admin) by themselves is removed.
+        // The becomeWriterButton visibility is already set to false.
         private void LogoutButton_Click(object sender, EventArgs e) {
-            this.user = new User();
+            this.user = new User(); // Resets to guest user
             authorizationSql.updateUser(user);
             if (catalogForm != null)
                 catalogForm.User = user;
@@ -146,11 +129,12 @@ namespace bookservice {
             registerLoginTextBox.Clear();
             registerPasswordTextBox.Clear();
             registerConfirmPasswordTextBox.Clear();
-            registerIsWriterCheckBox.Checked = false;
         }
         private void AuthorizationForm_FormClosed(object sender, FormClosedEventArgs e) {
-            catalogForm.Show();
-            authorizationSql.Dispose();
+            if (catalogForm != null && !catalogForm.IsDisposed)
+                catalogForm.Show();
+            if (authorizationSql != null)
+                authorizationSql.Dispose();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -25,17 +25,17 @@ namespace bookservice {
             this.user = user;
             string connectionString = "";
             switch (this.user.Role) {
-                case UserRole.WN_GUEST:
-                    connectionString = "Data Source=localhost;Initial Catalog=webnovel;User ID=WN_GUEST;Password=guest;";
+                case UserRole.GUEST: // Renamed
+                    connectionString = "Data Source=localhost;Initial Catalog=bookservice;User ID=guest;Password=guest;"; // User renamed
                     break;
-                case UserRole.WN_READER:
-                    connectionString = "Data Source=localhost;Initial Catalog=webnovel;User ID=WN_READER;Password=reader;";
+                case UserRole.READER: // Renamed
+                    connectionString = "Data Source=localhost;Initial Catalog=bookservice;User ID=reader;Password=reader;"; // User renamed
                     break;
-                case UserRole.WN_WRITER:
-                    connectionString = "Data Source=localhost;Initial Catalog=webnovel;User ID=WN_WRITER;Password=writer;";
+                case UserRole.ADMIN:  // Renamed
+                    connectionString = "Data Source=localhost;Initial Catalog=bookservice;User ID=admin;Password=admin;"; // User renamed
                     break;
                 default:
-                    connectionString = "Data Source=localhost;Initial Catalog=webnovel;User ID=WN_GUEST;Password=guest;";
+                    connectionString = "Data Source=localhost;Initial Catalog=bookservice;User ID=guest;Password=guest;"; // User renamed
                     break;
             }
             dbConnection.SetСonnectionString(connectionString);
@@ -56,20 +56,20 @@ namespace bookservice {
             else
                 sortByYearDirection = "";
         }
-        public DataTable GetWebnovels() {
+        public DataTable GetBooks() { // Renamed from GetWebnovels
             DataTable dt = new DataTable();
             try {
                 dbConnection.OpenConnection();
                 StringBuilder queryBuilder = new StringBuilder();
-                queryBuilder.Append("SELECT DISTINCT w.id, w.cover_path, w.title, w.publication_year ");
-                queryBuilder.Append("FROM webnovels w ");
+                queryBuilder.Append("SELECT DISTINCT b.id, b.cover_path, b.title, b.publication_year "); // Alias w to b for books
+                queryBuilder.Append("FROM books b "); // Renamed webnovels to books
                 if (selectedGenres.Any()) {
-                    queryBuilder.Append("JOIN webnovel_genres wg ON w.id = wg.webnovel_id ");
-                    queryBuilder.Append("JOIN genres g ON wg.genre_id = g.id ");
+                    queryBuilder.Append("JOIN book_genres bg ON b.id = bg.book_id "); // Renamed webnovel_genres to book_genres, wg to bg, webnovel_id to book_id
+                    queryBuilder.Append("JOIN genres g ON bg.genre_id = g.id ");
                 }
                 queryBuilder.Append("WHERE 1=1 ");
                 if (!string.IsNullOrEmpty(searchTerm))
-                    queryBuilder.Append("AND w.title LIKE @SearchTerm ");
+                    queryBuilder.Append("AND b.title LIKE @SearchTerm "); // Alias w to b
                 if (selectedGenres.Any()) {
                     List<string> genreParams = new List<string>();
                     for (int i = 0; i < selectedGenres.Count; i++)
@@ -80,12 +80,12 @@ namespace bookservice {
                     List<string> ageRatingParams = new List<string>();
                     for (int i = 0; i < selectedAgeRatings.Count; i++)
                         ageRatingParams.Add($"@AgeRating{i}");
-                    queryBuilder.Append($"AND w.age_rating IN ({string.Join(", ", ageRatingParams)}) ");
+                    queryBuilder.Append($"AND b.age_rating IN ({string.Join(", ", ageRatingParams)}) "); // Alias w to b
                 }
                 if (!string.IsNullOrEmpty(sortByYearDirection))
-                    queryBuilder.Append($"ORDER BY w.publication_year {sortByYearDirection}, w.title ASC ");
+                    queryBuilder.Append($"ORDER BY b.publication_year {sortByYearDirection}, b.title ASC "); // Alias w to b
                 else
-                    queryBuilder.Append("ORDER BY w.id ASC ");
+                    queryBuilder.Append("ORDER BY b.id ASC "); // Alias w to b
                 using (SqlCommand cmd = new SqlCommand(queryBuilder.ToString(), dbConnection.GetConnection())) {
                     if (!string.IsNullOrEmpty(searchTerm))
                         cmd.Parameters.AddWithValue("@SearchTerm", "%" + searchTerm + "%");
@@ -100,19 +100,19 @@ namespace bookservice {
                     adapter.Fill(dt);
                 }
             } catch (SqlException ex) {
-                Console.WriteLine("Ошибка SQL при получении веб-романов: " + ex.Message);
+                Console.WriteLine("Ошибка SQL при получении книг: " + ex.Message); // Updated message
             } catch (Exception ex) {
-                Console.WriteLine("Общая ошибка при получении веб-романов: " + ex.Message);
+                Console.WriteLine("Общая ошибка при получении книг: " + ex.Message); // Updated message
             } finally {
                 dbConnection.CloseConnection();
             }
             return dt;
         }
-        public List<string> GetWebnovelTitles() {
+        public List<string> GetBookTitles() { // Renamed from GetWebnovelTitles
             List<string> titles = new List<string>();
             try {
                 dbConnection.OpenConnection();
-                string query = "SELECT title FROM webnovels ORDER BY title ASC";
+                string query = "SELECT title FROM books ORDER BY title ASC"; // Renamed webnovels to books
                 using (SqlCommand cmd = new SqlCommand(query, dbConnection.GetConnection())) {
                     using (SqlDataReader reader = cmd.ExecuteReader()) {
                         while (reader.Read())
@@ -120,9 +120,9 @@ namespace bookservice {
                     }
                 }
             } catch (SqlException ex) {
-                Console.WriteLine("Ошибка SQL при получении названий веб-романов: " + ex.Message);
+                Console.WriteLine("Ошибка SQL при получении названий книг: " + ex.Message); // Updated message
             } catch (Exception ex) {
-                Console.WriteLine("Общая ошибка при получении названий веб-романов: " + ex.Message);
+                Console.WriteLine("Общая ошибка при получении названий книг: " + ex.Message); // Updated message
             } finally {
                 dbConnection.CloseConnection();
             }

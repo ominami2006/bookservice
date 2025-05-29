@@ -1,21 +1,21 @@
-﻿namespace bookservice {
+﻿﻿namespace bookservice {
     public enum UserRole {
-        WN_GUEST,
-        WN_READER,
-        WN_WRITER
+        GUEST,  // Renamed from WN_GUEST
+        READER, // Renamed from WN_READER
+        ADMIN   // Renamed from WN_WRITER
     }
     public class User {
         private int id;
         private string login;
         private string hashedPassword;
-        private bool isWriter;
+        private bool isAdmin; // Renamed from isWriter
         private UserRole role;
         public User() {
-            role = UserRole.WN_GUEST;
+            role = UserRole.GUEST; // Default role
             id = 0;
             login = "";
             hashedPassword = "";
-            isWriter = false;
+            isAdmin = false; // Renamed from isWriter
         }
         public int Id {
             get { return id; }
@@ -32,9 +32,9 @@
             set { hashedPassword = value; }
         }
 
-        public bool IsWriter {
-            get { return isWriter; }
-            set { isWriter = value; }
+        public bool IsAdmin { // Renamed from IsWriter
+            get { return isAdmin; }
+            set { isAdmin = value; }
         }
         public UserRole Role {
             get { return role; }

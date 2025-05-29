@@ -48,7 +48,8 @@
             this.searchTextBox = new System.Windows.Forms.TextBox();
             this.suggestionsListBox = new System.Windows.Forms.ListBox();
             this.authButton = new System.Windows.Forms.Label();
-            this.createNovelButton = new System.Windows.Forms.Label();
+            this.createBookButton = new System.Windows.Forms.Label();
+            this.historyButton = new System.Windows.Forms.Label();
             this.genresContextMenuStrip.SuspendLayout();
             this.ageRatingContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -261,20 +262,33 @@
             this.authButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.authButton.Click += new System.EventHandler(this.AuthButton_Click);
             // 
-            // createNovelButton
+            // createBookButton
             // 
-            this.createNovelButton.AutoSize = true;
-            this.createNovelButton.BackColor = System.Drawing.SystemColors.Control;
-            this.createNovelButton.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.createNovelButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.createNovelButton.Location = new System.Drawing.Point(629, 51);
-            this.createNovelButton.Name = "createNovelButton";
-            this.createNovelButton.Size = new System.Drawing.Size(324, 34);
-            this.createNovelButton.TabIndex = 12;
-            this.createNovelButton.Text = "📖 Создать веб-роман";
-            this.createNovelButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.createNovelButton.Visible = false;
-            this.createNovelButton.Click += new System.EventHandler(this.CreateNovelButton_Click);
+            this.createBookButton.AutoSize = true;
+            this.createBookButton.BackColor = System.Drawing.SystemColors.Control;
+            this.createBookButton.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.createBookButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.createBookButton.Location = new System.Drawing.Point(629, 51);
+            this.createBookButton.Name = "createBookButton";
+            this.createBookButton.Size = new System.Drawing.Size(257, 34);
+            this.createBookButton.TabIndex = 12;
+            this.createBookButton.Text = "📖 Создать книгу";
+            this.createBookButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.createBookButton.Visible = false;
+            this.createBookButton.Click += new System.EventHandler(this.CreateBookButton_Click);
+            // 
+            // historyButton
+            // 
+            this.historyButton.AutoSize = true;
+            this.historyButton.BackColor = System.Drawing.SystemColors.Control;
+            this.historyButton.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.historyButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.historyButton.Location = new System.Drawing.Point(969, 108);
+            this.historyButton.Name = "historyButton";
+            this.historyButton.Size = new System.Drawing.Size(171, 34);
+            this.historyButton.TabIndex = 13;
+            this.historyButton.Text = "⌛ История";
+            this.historyButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // CatalogForm
             // 
@@ -282,7 +296,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.ClientSize = new System.Drawing.Size(1454, 729);
-            this.Controls.Add(this.createNovelButton);
+            this.Controls.Add(this.historyButton);
+            this.Controls.Add(this.createBookButton);
             this.Controls.Add(this.authButton);
             this.Controls.Add(this.suggestionsListBox);
             this.Controls.Add(this.searchTextBox);
@@ -303,6 +318,7 @@
             this.Text = "Каталог веб-романов";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Activated += new System.EventHandler(this.CatalogForm_Activated);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CatalogForm_FormClosing);
             this.Load += new System.EventHandler(this.CatalogForm_Load);
             this.Click += new System.EventHandler(this.CatalogForm_Click);
             this.genresContextMenuStrip.ResumeLayout(false);
@@ -332,6 +348,7 @@
         private System.Windows.Forms.TextBox searchTextBox;
         private System.Windows.Forms.ListBox suggestionsListBox;
         private System.Windows.Forms.Label authButton;
-        private System.Windows.Forms.Label createNovelButton;
+        private System.Windows.Forms.Label createBookButton;
+        private System.Windows.Forms.Label historyButton;
     }
 }
