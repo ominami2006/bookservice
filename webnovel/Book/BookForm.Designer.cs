@@ -37,8 +37,8 @@
             this.genresFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.authorLabel = new System.Windows.Forms.Label();
             this.titleLabel = new System.Windows.Forms.Label();
-            this.downloadNovelLabelButton = new System.Windows.Forms.Label();
-            this.novelFilesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.readBookLabelButton = new System.Windows.Forms.Label();
+            this.bookFilesContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.coverPictureBox = new System.Windows.Forms.PictureBox();
             this.commentsTabPage = new System.Windows.Forms.TabPage();
             this.commentsHostPanel = new System.Windows.Forms.Panel();
@@ -50,7 +50,7 @@
             this.addFileButton = new System.Windows.Forms.Button();
             this.createBookTabPage = new System.Windows.Forms.TabPage();
             this.createWriterNameTextBox = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.createWriterNamePromptLabel = new System.Windows.Forms.Label();
             this.createGenresCheckedListBox = new System.Windows.Forms.CheckedListBox();
             this.createBookButton = new System.Windows.Forms.Button();
             this.createSelectCoverButton = new System.Windows.Forms.Button();
@@ -98,7 +98,7 @@
             this.bookTabPage.Controls.Add(this.genresFlowLayoutPanel);
             this.bookTabPage.Controls.Add(this.authorLabel);
             this.bookTabPage.Controls.Add(this.titleLabel);
-            this.bookTabPage.Controls.Add(this.downloadNovelLabelButton);
+            this.bookTabPage.Controls.Add(this.readBookLabelButton);
             this.bookTabPage.Controls.Add(this.coverPictureBox);
             this.bookTabPage.Location = new System.Drawing.Point(8, 46);
             this.bookTabPage.Name = "bookTabPage";
@@ -175,27 +175,27 @@
             this.titleLabel.TabIndex = 2;
             this.titleLabel.Text = "Название веб-романа";
             // 
-            // downloadNovelLabelButton
+            // readBookLabelButton
             // 
-            this.downloadNovelLabelButton.BackColor = System.Drawing.SystemColors.Control;
-            this.downloadNovelLabelButton.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.downloadNovelLabelButton.ContextMenuStrip = this.novelFilesContextMenuStrip;
-            this.downloadNovelLabelButton.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.downloadNovelLabelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.downloadNovelLabelButton.Location = new System.Drawing.Point(232, 470);
-            this.downloadNovelLabelButton.Name = "downloadNovelLabelButton";
-            this.downloadNovelLabelButton.Size = new System.Drawing.Size(306, 62);
-            this.downloadNovelLabelButton.TabIndex = 1;
-            this.downloadNovelLabelButton.Text = "Скачать веб-роман";
-            this.downloadNovelLabelButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.downloadNovelLabelButton.Click += new System.EventHandler(this.downloadNovelLabelButton_Click);
+            this.readBookLabelButton.BackColor = System.Drawing.SystemColors.Control;
+            this.readBookLabelButton.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.readBookLabelButton.ContextMenuStrip = this.bookFilesContextMenuStrip;
+            this.readBookLabelButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.readBookLabelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 13.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.readBookLabelButton.Location = new System.Drawing.Point(232, 470);
+            this.readBookLabelButton.Name = "readBookLabelButton";
+            this.readBookLabelButton.Size = new System.Drawing.Size(306, 62);
+            this.readBookLabelButton.TabIndex = 1;
+            this.readBookLabelButton.Text = "Читать книгу";
+            this.readBookLabelButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.readBookLabelButton.Click += new System.EventHandler(this.readBookLabelButton_Click);
             // 
-            // novelFilesContextMenuStrip
+            // bookFilesContextMenuStrip
             // 
-            this.novelFilesContextMenuStrip.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.novelFilesContextMenuStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
-            this.novelFilesContextMenuStrip.Name = "novelFilesContextMenuStrip";
-            this.novelFilesContextMenuStrip.Size = new System.Drawing.Size(61, 4);
+            this.bookFilesContextMenuStrip.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.bookFilesContextMenuStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
+            this.bookFilesContextMenuStrip.Name = "novelFilesContextMenuStrip";
+            this.bookFilesContextMenuStrip.Size = new System.Drawing.Size(61, 4);
             // 
             // coverPictureBox
             // 
@@ -307,7 +307,7 @@
             // 
             this.createBookTabPage.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.createBookTabPage.Controls.Add(this.createWriterNameTextBox);
-            this.createBookTabPage.Controls.Add(this.label1);
+            this.createBookTabPage.Controls.Add(this.createWriterNamePromptLabel);
             this.createBookTabPage.Controls.Add(this.createGenresCheckedListBox);
             this.createBookTabPage.Controls.Add(this.createBookButton);
             this.createBookTabPage.Controls.Add(this.createSelectCoverButton);
@@ -339,14 +339,14 @@
             this.createWriterNameTextBox.Size = new System.Drawing.Size(391, 52);
             this.createWriterNameTextBox.TabIndex = 15;
             // 
-            // label1
+            // createWriterNamePromptLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(393, 94);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(147, 45);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "Автор:";
+            this.createWriterNamePromptLabel.AutoSize = true;
+            this.createWriterNamePromptLabel.Location = new System.Drawing.Point(393, 94);
+            this.createWriterNamePromptLabel.Name = "createWriterNamePromptLabel";
+            this.createWriterNamePromptLabel.Size = new System.Drawing.Size(147, 45);
+            this.createWriterNamePromptLabel.TabIndex = 14;
+            this.createWriterNamePromptLabel.Text = "Автор:";
             // 
             // createGenresCheckedListBox
             // 
@@ -537,9 +537,9 @@
         private System.Windows.Forms.TabPage commentsTabPage;
         private System.Windows.Forms.TabPage editBookTabPage;
         private System.Windows.Forms.TabPage createBookTabPage;
-        private System.Windows.Forms.Label downloadNovelLabelButton;
+        private System.Windows.Forms.Label readBookLabelButton;
         private System.Windows.Forms.Label titleLabel;
-        private System.Windows.Forms.ContextMenuStrip novelFilesContextMenuStrip;
+        private System.Windows.Forms.ContextMenuStrip bookFilesContextMenuStrip;
         private System.Windows.Forms.FlowLayoutPanel genresFlowLayoutPanel;
         private System.Windows.Forms.Label authorLabel;
         private System.Windows.Forms.Label descriptionLabel;
@@ -569,6 +569,6 @@
         private System.Windows.Forms.OpenFileDialog openCoverFileDialog;
         private System.Windows.Forms.SaveFileDialog saveNovelFileDialog;
         private System.Windows.Forms.TextBox createWriterNameTextBox;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label createWriterNamePromptLabel;
     }
 }

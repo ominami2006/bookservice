@@ -68,6 +68,14 @@
       <DependentUpon>AuthorizationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Authorization\AuthorizationSQL.cs" />
+    <Compile Include="Book\Reading\ContentForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Book\Reading\ContentForm.Designer.cs">
+      <DependentUpon>ContentForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FB2\BookChapter.cs" />
+    <Compile Include="FB2\BookDocument.cs" />
     <Compile Include="Catalog\CatalogForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -83,8 +91,29 @@
       <DependentUpon>BookForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Book\BookSQL.cs" />
+    <Compile Include="FB2\FB2Parser.cs" />
+    <Compile Include="History\HistoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="History\HistoryForm.Designer.cs">
+      <DependentUpon>HistoryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="History\HistorySQL.cs" />
+    <Compile Include="Book\Reading\LoadingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Book\Reading\LoadingForm.Designer.cs">
+      <DependentUpon>LoadingForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Book\Reading\ReadingSQL.cs" />
+    <Compile Include="Book\Reading\ReadingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Book\Reading\ReadingForm.Designer.cs">
+      <DependentUpon>ReadingForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="User.cs" />
     <EmbeddedResource Include="Authorization\AuthorizationForm.resx">
       <DependentUpon>AuthorizationForm.cs</DependentUpon>
@@ -129,5 +158,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

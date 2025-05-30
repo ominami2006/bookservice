@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
@@ -10,17 +10,17 @@ namespace bookservice {
     public partial class CatalogForm : Form {
         private CatalogSQL catalogSql;
         private User user;
-        private List<string> allBookTitles; // Renamed from allNovelTitles
+        private List<string> allBookTitles;
         private List<string> allGenres;
 
         private const int CoverWidth = 288;
         private const int CoverHeight = 406;
-        private const int LabelHeight = 45;
+        private const int LabelHeight = 45; // Increased height for potentially longer titles
         private const int HorizontalMargin = 30;
         private const int VerticalMargin = 30;
         private const int StartXBase = 90;
 
-        private const string SearchPlaceholderText = "Поиск по названию";
+        private const string SearchPlaceholderText = "Поиск по названию книги...";
 
         private enum SortOrderState { None, Ascending, Descending }
         private SortOrderState currentSortOrder = SortOrderState.None;
@@ -30,16 +30,25 @@ namespace bookservice {
 
         public CatalogForm() {
             InitializeComponent();
+            // Ensure InitializeCustomComponents is called if it's not by designer.
+            // It's often called in Load event.
         }
 
         private void CatalogForm_Load(object sender, EventArgs e) {
-            user = new User();
+            novelsFlowPanel.Focus();
+            user = new User(); // Start as guest
             catalogSql = new CatalogSQL(user);
-            InitializeCustomComponents();
+            InitializeCustomComponents(); // Sets up clearSearchButton
             LoadInitialData();
-            UpdateFilterControlsLayout();
-            DisplayBooks(); // Renamed from DisplayWebnovels
-            AdminCheck(); // Check for admin status to show/hide create button
+            UpdateFilterControlsLayout(); // Initial layout
+            DisplayBooks();
+            AdminCheck(); // For createBookButton visibility
+            UpdateAuthButtonText(); // Set initial text for authButton
+            this.Resize += CatalogForm_Resize; // Add resize event handler for dynamic layout
+        }
+        private void CatalogForm_Resize(object sender, EventArgs e)
+        {
+            UpdateFilterControlsLayout(); // Re-apply layout on resize
         }
 
         private void InitializeCustomComponents() {
@@ -117,10 +126,11 @@ namespace bookservice {
             historyButton.Location = new Point(authButton.Right - historyButton.Width, authButton.Bottom + 10);
         }
         private void CatalogForm_Click(object sender, EventArgs e) {
-            novelsFlowPanel.Focus(); // Assuming novelsFlowPanel is for books
+            if(suggestionsListBox.Visible) suggestionsListBox.Visible = false;
+            novelsFlowPanel.Focus();
         }
-        private void DisplayBooks() { // Renamed from DisplayWebnovels
-            novelsFlowPanel.Controls.Clear(); // Assuming novelsFlowPanel is for books
+        private void DisplayBooks() {
+            novelsFlowPanel.Controls.Clear();
             catalogSql.SetSearchTerm(searchTextBox.Text == SearchPlaceholderText ? "" : searchTextBox.Text);
             catalogSql.SetSelectedGenres(selectedGenresFilter);
             catalogSql.SetSelectedAgeRatings(selectedAgeRatingsFilter);
@@ -132,42 +142,48 @@ namespace bookservice {
                 sortDirection = "DESC";
             catalogSql.SetSortByYearDirection(sortDirection);
 
-            DataTable booksData = catalogSql.GetBooks(); // Renamed from GetWebnovels
+            DataTable booksData = catalogSql.GetBooks();
 
             if (booksData == null || booksData.Rows.Count == 0) {
                 Label noResultsLabel = new Label {
                     Text = "По вашему запросу ничего не найдено.",
-                    Font = new Font("Verdana", 16, FontStyle.Regular),
+                    Font = new Font("Verdana", 16, FontStyle.Italic),
                     ForeColor = Color.Gray,
                     AutoSize = true,
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Dock = DockStyle.Fill // Fill the panel if no results
                 };
-                novelsFlowPanel.Controls.Add(noResultsLabel); // Assuming novelsFlowPanel is for books
+                novelsFlowPanel.Controls.Add(noResultsLabel);
                 return;
             }
 
             foreach (DataRow row in booksData.Rows) {
-                string bookId = row["id"].ToString(); // Changed from novelId
+                string bookId = row["id"].ToString();
                 string coverPath = row["cover_path"]?.ToString();
                 string title = row["title"]?.ToString();
 
-                Panel bookPanel = new Panel { // Renamed from novelPanel
+                Panel bookPanel = new Panel {
                     Width = CoverWidth,
                     Height = CoverHeight + LabelHeight,
-                    Margin = new Padding(0, 0, HorizontalMargin, VerticalMargin)
+                    Margin = new Padding(0, 0, HorizontalMargin, VerticalMargin),
+                    Cursor = Cursors.Hand
                 };
 
                 PictureBox pictureBox = new PictureBox {
                     Width = CoverWidth,
                     Height = CoverHeight,
                     SizeMode = PictureBoxSizeMode.StretchImage,
-                    BorderStyle = BorderStyle.None,
-                    Tag = bookId // Changed from novelId
+                    BorderStyle = BorderStyle.None, // Cleaner look
+                    Tag = bookId,
+                    Dock = DockStyle.Top // Fill top part of bookPanel
                 };
-                pictureBox.Click += PictureBox_Click;
+                pictureBox.Click += PictureBox_Click; // Event for clicking the cover
 
                 try {
-                    if (!string.IsNullOrEmpty(coverPath) && File.Exists(GetAbsolutePath(coverPath))) // Added GetAbsolutePath
-                        pictureBox.Image = Image.FromFile(GetAbsolutePath(coverPath));
+                    if (!string.IsNullOrEmpty(coverPath) && File.Exists(GetAbsolutePath(coverPath)))
+                        using (FileStream stream = new FileStream(GetAbsolutePath(coverPath), FileMode.Open, FileAccess.Read)) {
+                            pictureBox.Image = Image.FromStream(stream);
+                        }
                     else
                         pictureBox.Image = CreatePlaceholderImage(CoverWidth, CoverHeight);
                 } catch (Exception ex) {
@@ -176,20 +192,21 @@ namespace bookservice {
                 }
 
                 Label titleLabel = new Label {
-                    Text = TruncateText(title, new Font("Verdana", 16, FontStyle.Bold), CoverWidth - 5),
-                    Font = new Font("Verdana", 16, FontStyle.Bold),
+                    Text = TruncateText(title, new Font("Verdana", 11F, FontStyle.Bold), CoverWidth - 10), // Adjusted font
+                    Font = new Font("Verdana", 11F, FontStyle.Bold), // Adjusted font
                     ForeColor = Color.Black,
                     TextAlign = ContentAlignment.MiddleCenter,
-                    Width = CoverWidth,
+                    Dock = DockStyle.Bottom, // Fill bottom part of bookPanel
                     Height = LabelHeight,
-                    Location = new Point(0, CoverHeight)
+                    Padding = new Padding(5) // Padding for text
                 };
+                titleLabel.Click += (s, e) => PictureBox_Click(pictureBox, e); // Make label clickable too
 
-                bookPanel.Controls.Add(pictureBox); // Renamed from novelPanel
-                bookPanel.Controls.Add(titleLabel); // Renamed from novelPanel
-                novelsFlowPanel.Controls.Add(bookPanel); // Assuming novelsFlowPanel is for books
+                bookPanel.Controls.Add(pictureBox);
+                bookPanel.Controls.Add(titleLabel);
+                novelsFlowPanel.Controls.Add(bookPanel);
             }
-            novelsFlowPanel.Focus(); // Assuming novelsFlowPanel is for books
+            novelsFlowPanel.Focus();
         }
         private string GetAbsolutePath(string relativePath) {
             if (string.IsNullOrEmpty(relativePath) || Path.IsPathRooted(relativePath))
@@ -198,9 +215,11 @@ namespace bookservice {
             return Path.GetFullPath(Path.Combine(basePath, relativePath));
         }
 
-        private Bitmap CreatePlaceholderImage(int width, int height) {
+        private Bitmap CreatePlaceholderImage(int width, int height)
+        {
             Bitmap bmp = new Bitmap(width, height);
-            using (Graphics g = Graphics.FromImage(bmp)) {
+            using (Graphics g = Graphics.FromImage(bmp))
+            {
                 g.Clear(Color.FromArgb(60, 60, 60));
                 TextRenderer.DrawText(g, "Нет обложки",
                     new Font("Verdana", 16, FontStyle.Bold),
@@ -211,24 +230,21 @@ namespace bookservice {
             return bmp;
         }
 
+
+
         private string TruncateText(string text, Font font, int maxWidth) {
-            if (string.IsNullOrEmpty(text))
-                return "";
-
-            if (TextRenderer.MeasureText(text, font, Size.Empty, TextFormatFlags.NoPadding).Width <= maxWidth)
-                return text;
-
+            if (string.IsNullOrEmpty(text)) return "";
+            if (TextRenderer.MeasureText(text, font).Width <= maxWidth) return text;
             string ellipsis = "...";
-            string truncatedText = "";
-            int ellipsisWidth = TextRenderer.MeasureText(ellipsis, font, Size.Empty, TextFormatFlags.NoPadding).Width;
-
-            for (int i = 0; i < text.Length; i++) {
-                string testText = truncatedText + text[i];
-                if (TextRenderer.MeasureText(testText + ellipsis, font, Size.Empty, TextFormatFlags.NoPadding).Width > maxWidth)
-                    break;
-                truncatedText += text[i];
+            int ellipsisWidth = TextRenderer.MeasureText(ellipsis, font).Width;
+            string temp = "";
+            for (int i = text.Length -1; i >= 0; i--) {
+                temp = text.Substring(0,i);
+                if(TextRenderer.MeasureText(temp,font).Width <= maxWidth - ellipsisWidth) {
+                    return temp + ellipsis;
+                }
             }
-            return truncatedText.TrimEnd() + ellipsis;
+            return ellipsis; // Should not happen if maxWidth > ellipsisWidth
         }
 
         private void SearchTextBox_GotFocus(object sender, EventArgs e) {
@@ -244,24 +260,28 @@ namespace bookservice {
                 searchTextBox.ForeColor = Color.Gray;
                 clearSearchButton.Visible = false;
             }
-            if (!suggestionsListBox.Focused)
+             // Hide suggestions if neither search box nor listbox has focus
+            if (!suggestionsListBox.Focused && !searchTextBox.Focused)
+            {
                 suggestionsListBox.Visible = false;
+            }
         }
 
         private void SearchTextBox_TextChanged(object sender, EventArgs e) {
-            clearSearchButton.Visible = !string.IsNullOrWhiteSpace(searchTextBox.Text) && searchTextBox.Text != SearchPlaceholderText;
+            bool hasText = !string.IsNullOrWhiteSpace(searchTextBox.Text) && searchTextBox.Text != SearchPlaceholderText;
+            clearSearchButton.Visible = hasText;
 
-            if (searchTextBox.Focused && searchTextBox.Text != SearchPlaceholderText && searchTextBox.Text.Length > 0) {
+            if (searchTextBox.Focused && hasText && searchTextBox.Text.Length > 0) { // Min 1 char for suggestions
                 string searchText = searchTextBox.Text.ToLower();
-                var filteredTitles = allBookTitles // Renamed from allNovelTitles
+                var filteredTitles = allBookTitles?
                     .Where(title => title.ToLower().Contains(searchText))
-                    .Take(5)
-                    .ToList();
-                suggestionsListBox.Height = filteredTitles.Count() * 23;
+                    .Take(7) // More suggestions
+                    .ToList() ?? new List<string>();
 
                 if (filteredTitles.Any()) {
                     suggestionsListBox.DataSource = filteredTitles;
                     suggestionsListBox.Visible = true;
+                    suggestionsListBox.Height = Math.Min(filteredTitles.Count * 23, 150); // Max height for suggestions
                 } else {
                     suggestionsListBox.Visible = false;
                 }
@@ -272,26 +292,27 @@ namespace bookservice {
 
         private void SearchTextBox_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter) {
-                e.SuppressKeyPress = true;
+                e.SuppressKeyPress = true; // Prevent beep
                 suggestionsListBox.Visible = false;
-                DisplayBooks(); // Renamed from DisplayWebnovels
+                DisplayBooks();
+                novelsFlowPanel.Focus(); // Move focus away from searchbox
             } else if (e.KeyCode == Keys.Down && suggestionsListBox.Visible && suggestionsListBox.Items.Count > 0) {
                 e.SuppressKeyPress = true;
                 suggestionsListBox.Focus();
                 suggestionsListBox.SelectedIndex = 0;
             } else if (e.KeyCode == Keys.Escape) {
                 suggestionsListBox.Visible = false;
+                searchTextBox.SelectAll(); // Keep focus, allow easy re-typing
             }
         }
 
         private void ClearSearchButton_Click(object sender, EventArgs e) {
-            searchTextBox.Text = "";
-            searchTextBox.ForeColor = Color.Gray;
             searchTextBox.Text = SearchPlaceholderText;
+            searchTextBox.ForeColor = Color.Gray;
             clearSearchButton.Visible = false;
             suggestionsListBox.Visible = false;
-            DisplayBooks(); // Renamed from DisplayWebnovels
-            novelsFlowPanel.Focus(); // Assuming novelsFlowPanel is for books
+            DisplayBooks();
+            novelsFlowPanel.Focus();
         }
 
         private void SuggestionsListBox_KeyDown(object sender, KeyEventArgs e) {
@@ -299,12 +320,10 @@ namespace bookservice {
                 e.SuppressKeyPress = true;
                 if (suggestionsListBox.SelectedItem != null) {
                     searchTextBox.Text = suggestionsListBox.SelectedItem.ToString();
-                    searchTextBox.Focus();
-                    searchTextBox.Select(searchTextBox.Text.Length, 0);
+                    searchTextBox.Focus(); // Return focus to search box
+                    searchTextBox.Select(searchTextBox.Text.Length, 0); // Cursor at end
                     suggestionsListBox.Visible = false;
-                    if (e.KeyCode == Keys.Enter) {
-                        DisplayBooks(); // Renamed from DisplayWebnovels
-                    }
+                    if (e.KeyCode == Keys.Enter) DisplayBooks(); // Search on Enter
                 }
             } else if (e.KeyCode == Keys.Escape) {
                 suggestionsListBox.Visible = false;
@@ -318,17 +337,31 @@ namespace bookservice {
                 searchTextBox.Focus();
                 searchTextBox.Select(searchTextBox.Text.Length, 0);
                 suggestionsListBox.Visible = false;
-                DisplayBooks(); // Renamed from DisplayWebnovels
-                novelsFlowPanel.Focus(); // Assuming novelsFlowPanel is for books
+                DisplayBooks();
+                novelsFlowPanel.Focus();
             }
         }
         private void AuthButton_Click(object sender, EventArgs e) {
-            if (Application.OpenForms.OfType<AuthorizationForm>().Count() == 0) { // Ensure only one instance
+            if (Application.OpenForms.OfType<AuthorizationForm>().Count() == 0) {
                 AuthorizationForm authorizationForm = new AuthorizationForm();
                 authorizationForm.Owner = this;
-                this.Hide();
-                authorizationForm.Show();
+                // this.Hide(); // Don't hide, auth form is modal-like
+                authorizationForm.ShowDialog(); // Show as dialog to block interaction with catalog
+                // After auth form closes, User property might have changed.
+                // The Activated event handles refreshing.
             }
+        }
+        private void UpdateAuthButtonText()
+        {
+            if (user != null && user.Id != 0)
+            {
+                authButton.Text = $"👤 {user.Login}";
+            }
+            else
+            {
+                authButton.Text = "🔑 Войти";
+            }
+            UpdateFilterControlsLayout(); // Auth button width might change
         }
 
         private void GenresFilterButton_Click(object sender, EventArgs e) {
@@ -337,21 +370,16 @@ namespace bookservice {
 
         private void GenreMenuItem_CheckedChanged(object sender, EventArgs e) {
             ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
-            if (clickedItem == null)
-                return;
+            if (clickedItem == null || clickedItem == resetGenresFilterMenuItem) return;
 
             string genreName = clickedItem.Text;
-
             if (clickedItem.Checked) {
-                if (!selectedGenresFilter.Contains(genreName)) {
-                    selectedGenresFilter.Add(genreName);
-                }
+                if (!selectedGenresFilter.Contains(genreName)) selectedGenresFilter.Add(genreName);
             } else {
                 selectedGenresFilter.Remove(genreName);
             }
             UpdateGenresFilterButtonText();
-            DisplayBooks(); // Renamed from DisplayWebnovels
-            UpdateFilterControlsLayout();
+            DisplayBooks();
         }
 
         private void ResetGenresFilterMenuItem_Click(object sender, EventArgs e) {
@@ -362,16 +390,16 @@ namespace bookservice {
                 }
             }
             UpdateGenresFilterButtonText();
-            DisplayBooks(); // Renamed from DisplayWebnovels
-            UpdateFilterControlsLayout();
+            DisplayBooks();
         }
 
         private void UpdateGenresFilterButtonText() {
             if (selectedGenresFilter.Any()) {
-                genresFilterButton.Text = "📚 " + string.Join(", ", selectedGenresFilter);
+                genresFilterButton.Text = "📚 Жанры: " + string.Join(", ", selectedGenresFilter.Take(2)) + (selectedGenresFilter.Count > 2 ? "..." : "");
             } else {
-                genresFilterButton.Text = "📚 Жанры";
+                genresFilterButton.Text = "📚 Все жанры";
             }
+            UpdateFilterControlsLayout(); // Button width might change
         }
 
         private void AgeRatingFilterButton_Click(object sender, EventArgs e) {
@@ -380,127 +408,150 @@ namespace bookservice {
 
         private void AgeRatingMenuItem_CheckedChanged(object sender, EventArgs e) {
             ToolStripMenuItem clickedItem = sender as ToolStripMenuItem;
-            if (clickedItem == null || clickedItem.Tag == null)
-                return;
+            if (clickedItem == null || clickedItem.Tag == null || clickedItem == resetAgeRatingFilterMenuItem) return;
 
             int ageRating = Convert.ToInt32(clickedItem.Tag);
-
             if (clickedItem.Checked) {
-                if (!selectedAgeRatingsFilter.Contains(ageRating)) {
-                    selectedAgeRatingsFilter.Add(ageRating);
-                }
+                if (!selectedAgeRatingsFilter.Contains(ageRating)) selectedAgeRatingsFilter.Add(ageRating);
             } else {
                 selectedAgeRatingsFilter.Remove(ageRating);
             }
             UpdateAgeRatingFilterButtonText();
-            DisplayBooks(); // Renamed from DisplayWebnovels
-            UpdateFilterControlsLayout();
+            DisplayBooks();
         }
 
         private void ResetAgeRatingFilterMenuItem_Click(object sender, EventArgs e) {
             selectedAgeRatingsFilter.Clear();
             foreach (ToolStripItem item in ageRatingContextMenuStrip.Items) {
-                if (item is ToolStripMenuItem ageItem && ageItem.Tag != null) {
+                if (item is ToolStripMenuItem ageItem && ageItem.Tag != null && ageItem != resetAgeRatingFilterMenuItem) {
                     ageItem.Checked = false;
                 }
             }
             UpdateAgeRatingFilterButtonText();
-            DisplayBooks(); // Renamed from DisplayWebnovels
-            UpdateFilterControlsLayout();
+            DisplayBooks();
         }
 
         private void UpdateAgeRatingFilterButtonText() {
             if (selectedAgeRatingsFilter.Any()) {
                 selectedAgeRatingsFilter.Sort();
-                ageRatingFilterButton.Text = "🚫 " + string.Join(", ", selectedAgeRatingsFilter.Select(r => r + "+"));
+                ageRatingFilterButton.Text = "🚫 Рейтинг: " + string.Join(", ", selectedAgeRatingsFilter.Select(r => r + "+").Take(2)) + (selectedAgeRatingsFilter.Count > 2 ? "..." : "");
             } else {
-                ageRatingFilterButton.Text = "🚫 Возрастные ограничения";
+                ageRatingFilterButton.Text = "🚫 Все рейтинги";
             }
+            UpdateFilterControlsLayout(); // Button width might change
         }
 
         private void YearSortButton_Click(object sender, EventArgs e) {
             switch (currentSortOrder) {
                 case SortOrderState.None:
                     currentSortOrder = SortOrderState.Ascending;
-                    yearSortButton.Text = "📅 Год выпуска ▲";
+                    yearSortButton.Text = "📅 Год ▲";
                     break;
                 case SortOrderState.Ascending:
                     currentSortOrder = SortOrderState.Descending;
-                    yearSortButton.Text = "📅 Год выпуска ▼";
+                    yearSortButton.Text = "📅 Год ▼";
                     break;
                 case SortOrderState.Descending:
                     currentSortOrder = SortOrderState.None;
                     yearSortButton.Text = "📅 Год выпуска";
                     break;
             }
-            DisplayBooks(); // Renamed from DisplayWebnovels
-            UpdateFilterControlsLayout();
+            DisplayBooks();
         }
 
         private void PictureBox_Click(object sender, EventArgs e) {
             PictureBox clickedPictureBox = sender as PictureBox;
-            if (Application.OpenForms.OfType<BookForm>().Count() == 0 && clickedPictureBox != null && clickedPictureBox.Tag != null) { // Ensure only one instance
-                selectedBookID = clickedPictureBox.Tag.ToString(); // Renamed from selectedNovelID
-                BookForm bookForm = new BookForm(); // Renamed from novelForm
+             if (clickedPictureBox == null && sender is Label) // If label was clicked
+            {
+                clickedPictureBox = (sender as Label).Parent.Controls.OfType<PictureBox>().FirstOrDefault();
+            }
+
+            if (Application.OpenForms.OfType<BookForm>().Count() == 0 && clickedPictureBox != null && clickedPictureBox.Tag != null) {
+                selectedBookID = clickedPictureBox.Tag.ToString();
+                BookForm bookForm = new BookForm();
                 bookForm.Owner = this;
                 this.Hide();
                 bookForm.Show();
             }
         }
-        private string selectedBookID; // Renamed from selectedNovelID
-        public string GetSelectedBookID { // Renamed from GetSelectedNovelID
+        private string selectedBookID;
+        public string GetSelectedBookID {
             get { return selectedBookID; }
         }
         public User User {
             get { return user; }
             set {
                 user = value;
-                catalogSql.updateUser(user);
-                AdminCheck(); // Renamed from WriterCheck
+                catalogSql.updateUser(user); // Update SQL connection based on new user role
+                AdminCheck();
+                UpdateAuthButtonText(); // Update button text after login/logout
+                DisplayBooks(); // Refresh books as permissions might change what's queryable
             }
         }
-        private void AdminCheck() { // Renamed from WriterCheck
-            if (user.IsAdmin == true) // Changed from IsWriter
-                createBookButton.Visible = true; // Assuming createNovelButton is createBookButton
-            else
-                createBookButton.Visible = false; // Assuming createNovelButton is createBookButton
-            if (user.Id != 0)
-                historyButton.Visible = true;
-            else
-                historyButton.Visible = false;
+        private void AdminCheck() {
+            createBookButton.Visible = user.IsAdmin; // Only admins can create
+            historyButton.Visible = user.Id != 0; // Only logged-in users see history
+            UpdateFilterControlsLayout(); // Visibility change affects layout
         }
-        private void CreateBookButton_Click(object sender, EventArgs e) { // Renamed from CreateNovelButton_Click
-            if (Application.OpenForms.OfType<BookForm>().Count() == 0) { // Ensure only one instance
-                selectedBookID = "0"; // Renamed from selectedNovelID
-                BookForm bookForm = new BookForm(); // Renamed from novelForm
+        private void CreateBookButton_Click(object sender, EventArgs e) {
+            if (Application.OpenForms.OfType<BookForm>().Count() == 0) {
+                selectedBookID = "0"; // Indicates new book creation mode for BookForm
+                BookForm bookForm = new BookForm();
                 bookForm.Owner = this;
                 this.Hide();
                 bookForm.Show();
             }
         }
+
+        private void historyButton_Click(object sender, EventArgs e)
+        {
+            if (user == null || user.Id == 0)
+            {
+                MessageBox.Show("Пожалуйста, войдите в систему, чтобы просмотреть историю чтения.", "Требуется авторизация", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (Application.OpenForms.OfType<HistoryForm>().Count() == 0)
+            {
+                HistoryForm historyForm = new HistoryForm(user);
+                historyForm.Owner = this;
+                // this.Hide(); // Don't hide catalog, history is modal
+                historyForm.ShowDialog(); // Show as dialog
+            }
+            else
+            {
+                Application.OpenForms.OfType<HistoryForm>().First().Activate(); // Bring to front if already open
+            }
+        }
+
+
         private void CatalogForm_FormClosing(object sender, FormClosingEventArgs e) {
             if (catalogSql != null) {
                 catalogSql.Dispose();
             }
-            foreach (Control panelControl in novelsFlowPanel.Controls) { // Assuming novelsFlowPanel is for books
-                if (panelControl is Panel bookPanel) { // Renamed from novelPanel
+            // Dispose images in PictureBoxes to free resources
+            foreach (Control panelControl in novelsFlowPanel.Controls) {
+                if (panelControl is Panel bookPanel) {
                     foreach (Control itemControl in bookPanel.Controls) {
                         if (itemControl is PictureBox pb && pb.Image != null) {
                             pb.Image.Dispose();
+                            pb.Image = null;
                         }
                     }
                 }
                 panelControl.Dispose();
             }
-            novelsFlowPanel.Controls.Clear(); // Assuming novelsFlowPanel is for books
+            novelsFlowPanel.Controls.Clear();
         }
         private void CatalogForm_Activated(object sender, EventArgs e) {
-            // Refresh data when form is activated, e.g., after closing BookForm or AuthForm
-            if (catalogSql != null)
+            // This event fires when the form becomes active, e.g., after BookForm or AuthForm closes.
+            // Refresh data that might have changed.
+            if (catalogSql != null) // Ensure catalogSql is initialized
             {
                 allBookTitles = catalogSql.GetBookTitles(); // Refresh titles for search suggestions
-                DisplayBooks();
-                AdminCheck(); // Re-check admin status for create button
+                DisplayBooks(); // Refresh the list of books
+                AdminCheck(); // Re-check admin status for create button and history
+                UpdateAuthButtonText(); // Update login status on auth button
             }
         }
     }

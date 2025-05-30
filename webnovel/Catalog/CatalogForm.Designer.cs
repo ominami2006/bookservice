@@ -227,7 +227,7 @@
             this.searchTextBox.Name = "searchTextBox";
             this.searchTextBox.Size = new System.Drawing.Size(500, 53);
             this.searchTextBox.TabIndex = 9;
-            this.searchTextBox.Text = "Поиск по названию";
+            this.searchTextBox.Text = "Поиск по названию книги...";
             this.searchTextBox.TextChanged += new System.EventHandler(this.SearchTextBox_TextChanged);
             this.searchTextBox.Enter += new System.EventHandler(this.SearchTextBox_GotFocus);
             this.searchTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.SearchTextBox_KeyDown);
@@ -289,6 +289,7 @@
             this.historyButton.TabIndex = 13;
             this.historyButton.Text = "⌛ История";
             this.historyButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.historyButton.Click += new System.EventHandler(this.historyButton_Click);
             // 
             // CatalogForm
             // 
